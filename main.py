@@ -15,7 +15,7 @@ class UserBooking(HttpUser):
     @task
     def admin_tasks(self):
         # login
-        query = Query(ts_address="http://localhost:8080")
+        query = Query(ts_address=self.host)
         query.login(username="admin", password="222222")
         query.query_admin_travel()
         query.query_admin_basic_price() 
@@ -24,10 +24,12 @@ class UserBooking(HttpUser):
     @task
     def query_and_preserve(self):
         # login
-        query = Query(ts_address="http://localhost:8080")
+        query = Query(ts_address=self.host)
         query.login()
         query_and_preserve(query)
         query.query_high_speed_ticket()
+        # query.query_high_speed_ticket_parallel()
+        query.query_normal_ticket()
 
         
 
