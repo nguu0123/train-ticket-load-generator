@@ -4,19 +4,11 @@ Train Ticket Auto Query Python Scripts
 
 ## How to use
 
-```python
-import logging
-from queries import Query
-from scenarios import query_and_preserve
+```bash
+python -m venv env
+. env/bin/activate
 
-# login train-ticket and store the cookies
-q = Query(url)
-if not q.login():
-    logging.fatal('login failed')
+pip install -r requirements.txt
 
-# execute scenario on current user
-query_and_preserve(q)
-
-# or execute query directly
-q.query_high_speed_ticket()
+locust --host http://localhost:8080 --headless --users 2 -f main.py
 ```
