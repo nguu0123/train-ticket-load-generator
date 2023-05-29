@@ -3,7 +3,7 @@ import requests
 import logging
 import time
 import random
-from .utils import *
+from utils import *
 
 logger = logging.getLogger("auto-queries")
 datestr = time.strftime("%Y-%m-%d", time.localtime())
@@ -41,13 +41,13 @@ class Query:
         }
 
         data = '{"username":"' + username + '","password":"' + \
-            password + '","verificationCode":"1234"}'
+            password + '"}'
+            # password + '","verificationCode":"1234"}'
 
         # 获取cookies
-        verify_url = self.address + '/api/v1/verifycode/generate'
-        r = self.session.get(url=verify_url)
-        r = self.session.post(url=url, headers=headers,
-                              data=data, verify=False)
+        # verify_url = self.address + '/api/v1/verifycode/generate'
+        # r = self.session.get(url=verify_url)
+        r = self.session.post(url=url, headers=headers, data=data, verify=False)
 
         if r.status_code == 200:
             data = r.json().get("data")
