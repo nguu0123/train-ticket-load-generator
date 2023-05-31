@@ -1,16 +1,18 @@
 import logging
 import json
 import uuid
+import random
+import time
 
 from queries import Query
-from scenarios import query_and_preserve
+from scenarios import query_and_preserve, query_and_pay, query_and_consign
 from datetime import datetime, timedelta, date
 from locust import HttpUser, task, between, constant, events
 
 
 
 class UserBooking(HttpUser):
-    wait_time = between(1, 2)
+    wait_time = between(2, 10)
 
     @task
     def admin_tasks(self):
@@ -26,10 +28,29 @@ class UserBooking(HttpUser):
         # login
         query = Query(ts_address=self.host)
         query.login()
-        query_and_preserve(query)
-        query.query_high_speed_ticket()
-        # query.query_high_speed_ticket_parallel()
+
         query.query_normal_ticket()
+        time.sleep(random.randint(1, 5))
 
-        
+        # 1 out of 10 clients will perform query and preserve, and sleep 1-5 second
+        if random.randint(0, 10) == 0:
+            query_and_preserve(query)
+            time.sleep(random.randint(1, 5))
 
+        if random.randint(0, 10) == 0:
+            query_and_pay(query)
+            time.sleep(random.randint(1, 5))
+
+        if random.randint(0, 10) == 0:
+            query_and_consign(query)
+            time.sleep(random.randint(1, 5))
+
+    
+        # 1 out of 3 clients will perform query and preserve
+        if random.randint(0, 3) == 0:
+            query.query_high_speed_ticket()
+            time.sleep(random.randint(1, 5))
+            
+        if random.randint(0, 3) == 0:
+            query.query_food()
+            time.sleep(random.randint(1, 5))
