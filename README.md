@@ -10,5 +10,7 @@ python -m venv env
 
 pip install -r requirements.txt
 
-locust --host http://localhost:8080 --headless --only-summary --users 40 -f main.py
+locust --host http://localhost:8080 --headless --only-summary --users 2 -f main.py
+
+locust --host http://localhost:8080 --headless --only-summary --users 2 -f main-admin.py
 ```
