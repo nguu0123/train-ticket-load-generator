@@ -15,15 +15,6 @@ class UserBooking(HttpUser):
     wait_time = between(2, 10)
 
     @task
-    def admin_tasks(self):
-        # login
-        query = Query(ts_address=self.host)
-        query.login(username="admin", password="222222")
-        query.query_admin_travel()
-        query.query_admin_basic_price() 
-        query.query_admin_basic_config()
-
-    @task
     def query_and_preserve(self):
         # login
         query = Query(ts_address=self.host)
