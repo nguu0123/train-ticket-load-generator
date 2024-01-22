@@ -104,6 +104,7 @@ class Query:
             trip_id = d.get("tripId").get("type") + \
                 d.get("tripId").get("number")
             trip_ids.append(trip_id)
+        logger.info(f"query high speed ticket success, trip_ids: {trip_ids}")
         return trip_ids
 
     def query_normal_ticket(self, place_pair: tuple = (), time: str = "", headers: dict = {}) -> List[str]:
@@ -126,8 +127,7 @@ class Query:
         response = self.session.post(url=url, headers=headers, json=payload)
 
         if response.status_code != 200 or response.json().get("data") is None:
-            logger.warning(
-                f"request for {url} failed. response data is {response.text}")
+            logger.warning( f"request for {url} failed. response data is {response.text}")
             return None
 
         data = response.json().get("data")  # type: dict
@@ -137,6 +137,7 @@ class Query:
             trip_id = d.get("tripId").get("type") + \
                 d.get("tripId").get("number")
             trip_ids.append(trip_id)
+        logger.info(f"query normal ticket success, trip_ids: {trip_ids}")
         return trip_ids
 
     def query_high_speed_ticket_parallel(self, place_pair: tuple = (), time: str = "", headers: dict = {}) -> List[str]:
@@ -228,7 +229,8 @@ class Query:
             return None
         _ = response.json().get("data")
         # assurance只有一种
-
+    
+        logger.info(f"query assurance success")
         return [{"assurance": "1"}]
 
     def query_food(self, place_pair: tuple = ("Shang Hai", "Su Zhou"), train_num: str = "D1345", headers: dict = {}):
@@ -242,6 +244,7 @@ class Query:
         _ = response.json().get("data")
 
         # food 是什么不会对后续调用链有影响，因此查询后返回一个固定数值
+        logger.info(f"query food success")
         return [{
             "foodName": "Soup",
             "foodPrice": 3.7,
