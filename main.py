@@ -16,6 +16,7 @@ class UserBooking(HttpUser):
 
     @task
     def query_and_preserve(self):
+        print("Perform user tasks")
         # login
         query = Query(ts_address=self.host)
         query.login()
@@ -45,3 +46,16 @@ class UserBooking(HttpUser):
         if random.randint(0, 3) == 0:
             query.query_food()
             time.sleep(random.randint(1, 5))
+
+    @task
+    def admin_tasks(self):
+        print("Perform admin tasks")
+        # login
+        query = Query(ts_address=self.host)
+        query.login(username="admin", password="222222")
+        query.query_admin_travel()
+        time.sleep(random.randint(1, 5))
+        query.query_admin_basic_price() 
+        time.sleep(random.randint(1, 5))
+        query.query_admin_basic_config()
+
