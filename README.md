@@ -4,11 +4,17 @@ Train Ticket Auto Query Python Scripts
 
 ## How to use
 
-```bash
-python -m venv env
-. env/bin/activate
+- Install uv
 
-pip install -r requirements.txt
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+- Start load generator
+
+```bash
+uv sync
+source .venv/bin/activate
 
 locust --host http://localhost:8080 --headless --only-summary --users 2 -f main.py
 
