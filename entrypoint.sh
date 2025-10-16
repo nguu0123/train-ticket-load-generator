@@ -1,2 +1,2 @@
 #!/bin/sh
-exec locust "$@"
+exec locust --headless "$@"
