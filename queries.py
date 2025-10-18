@@ -1,5 +1,4 @@
 from typing import List
-import requests
 import logging
 import time
 import random
@@ -14,11 +13,11 @@ class Query:
     train-ticket query class
     """
 
-    def __init__(self, ts_address: str) -> None:
+    def __init__(self, ts_address: str, session) -> None:
         self.address = ts_address
         self.uid = ""
         self.token = ""
-        self.session = requests.Session()
+        self.session = session
         self.session.headers.update(
             {
                 "Proxy-Connection": "keep-alive",

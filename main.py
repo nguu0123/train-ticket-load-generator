@@ -19,7 +19,7 @@ class UserBooking(HttpUser):
     def query_and_preserve(self):
         print("Perform user tasks")
         # login
-        query = Query(ts_address=self.host)
+        query = Query(self.host, self.client)
         query.login()
 
         query.query_normal_ticket()
@@ -51,7 +51,7 @@ class UserBooking(HttpUser):
     def admin_tasks(self):
         print("Perform admin tasks")
         # login
-        query = Query(ts_address=self.host)
+        query = Query(self.host, self.client)
         query.login(username="admin", password="222222")
         query.query_admin_travel()
         time.sleep(random.randint(1, 5))
