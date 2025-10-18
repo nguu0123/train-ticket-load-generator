@@ -21,14 +21,14 @@ def query_one_and_put_consign(headers, pairs):
     print(f"{order_id} queried and put consign")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cookie = "JSESSIONID=823B2652E3F5B64A1C94C924A05D80AF; YsbCaptcha=2E037F4AB09D49FA9EE3BE4E737EAFD2"
     Authorization = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmZHNlX21pY3Jvc2VydmljZSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpZCI6IjRkMmE0NmM3LTcxY2ItNGNmMS1iNWJiLWI2ODQwNmQ5ZGE2ZiIsImlhdCI6MTYyODcwNTc0MiwiZXhwIjoxNjI4NzA5MzQyfQ.VHlvCNvaDW41rO55XNV1nniKotW6ip1TFfHaDqyDO3s"
     headers = {
-        'Connection': 'close',
+        "Connection": "close",
         "Cookie": f"{cookie}",
         "Authorization": f"Bearer {Authorization}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
     uuid = "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f"
 

@@ -1,4 +1,10 @@
-from atomic_queries import _query_high_speed_ticket, _query_normal_ticket, _query_assurances, _query_food, _query_contacts
+from atomic_queries import (
+    _query_high_speed_ticket,
+    _query_normal_ticket,
+    _query_assurances,
+    _query_food,
+    _query_contacts,
+)
 from utils import random_boolean, random_phone, random_str, random_form_list
 
 import logging
@@ -32,13 +38,17 @@ def query_and_preserve(headers):
         start = "Shang Hai"
         end = "Su Zhou"
         high_speed_place_pair = (start, end)
-        trip_ids = _query_high_speed_ticket(place_pair=high_speed_place_pair, headers=headers, time=date)
+        trip_ids = _query_high_speed_ticket(
+            place_pair=high_speed_place_pair, headers=headers, time=date
+        )
         PRESERVE_URL = f"{base_address}/api/v1/preserveservice/preserve"
     else:
         start = "Shang Hai"
         end = "Nan Jing"
         other_place_pair = (start, end)
-        trip_ids = _query_normal_ticket(place_pair=other_place_pair, headers=headers, time=date)
+        trip_ids = _query_normal_ticket(
+            place_pair=other_place_pair, headers=headers, time=date
+        )
         PRESERVE_URL = f"{base_address}/api/v1/preserveotherservice/preserveOther"
 
     _ = _query_assurances(headers=headers)
@@ -52,7 +62,7 @@ def query_and_preserve(headers):
         "date": date,
         "from": start,
         "to": end,
-        "tripId": ""
+        "tripId": "",
     }
 
     trip_id = random_form_list(trip_ids)
@@ -84,28 +94,28 @@ def query_and_preserve(headers):
             "consigneeName": random_str(),
             "consigneePhone": random_phone(),
             "consigneeWeight": random.randint(1, 10),
-            "handleDate": date
+            "handleDate": date,
         }
         base_preserve_payload.update(consign)
 
     print("payload:" + str(base_preserve_payload))
 
-    print(f"choices: preserve_high: {high_speed} need_food:{need_food}  need_consign: {need_consign}  need_assurance:{need_assurance}")
+    print(
+        f"choices: preserve_high: {high_speed} need_food:{need_food}  need_consign: {need_consign}  need_assurance:{need_assurance}"
+    )
 
-    res = requests.post(url=PRESERVE_URL,
-                        headers=headers,
-                        json=base_preserve_payload)
+    res = requests.post(url=PRESERVE_URL, headers=headers, json=base_preserve_payload)
 
     print(res.json())
     if res.json()["data"] != "Success":
         raise Exception(res.json() + " not success")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     headers = {
         "Cookie": "JSESSIONID=823B2652E3F5B64A1C94C924A05D80AF; YsbCaptcha=2E037F4AB09D49FA9EE3BE4E737EAFD2",
         "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmZHNlX21pY3Jvc2VydmljZSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpZCI6IjRkMmE0NmM3LTcxY2ItNGNmMS1iNWJiLWI2ODQwNmQ5ZGE2ZiIsImlhdCI6MTYyNzE5OTA0NCwiZXhwIjoxNjI3MjAyNjQ0fQ.3IIwwz7AwqHtOFDeXfih25i6_7nQBPL_K7BFxuyFiKQ",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
 
     start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())

@@ -6,9 +6,8 @@ base_address = "http://10.176.122.1:32677"
 
 
 def query_and_rebook(headers):
-
     pairs = _query_orders(headers=headers, types=tuple([1]))
-    #pairs2 = _query_orders(headers=headers, types=tuple([1]), query_other=True)
+    # pairs2 = _query_orders(headers=headers, types=tuple([1]), query_other=True)
 
     # if not pairs and not pairs2:
     #     return
@@ -21,24 +20,28 @@ def query_and_rebook(headers):
     new_date = time.strftime("%Y-%m-%d", time.localtime())
     new_seat_type = "3"
 
-    for pair in pairs: 
-        #print(pair)
-        _rebook_ticket(old_order_id=pair[0], old_trip_id=pair[1], new_trip_id=new_trip_id, new_date=new_date, new_seat_type=new_seat_type, headers=headers)
+    for pair in pairs:
+        # print(pair)
+        _rebook_ticket(
+            old_order_id=pair[0],
+            old_trip_id=pair[1],
+            new_trip_id=new_trip_id,
+            new_date=new_date,
+            new_seat_type=new_seat_type,
+            headers=headers,
+        )
 
 
-
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     _, token = _login()
 
     headers = {
         "Cookie": "JSESSIONID=DBE6EC845809D4BFEA66D76BA600995F; YsbCaptcha=63EEEE0E2D564384A7C0052999F3AEA6",
         "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmZHNlX21pY3Jvc2VydmljZSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpZCI6IjRkMmE0NmM3LTcxY2ItNGNmMS1iNWJiLWI2ODQwNmQ5ZGE2ZiIsImlhdCI6MTYyODA5NjE1OSwiZXhwIjoxNjI4MDk5NzU5fQ.xoFsdd-erzuwjJFjl3M6enrCtths0Toy0NjotSohq7s",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
     headers["Authorization"] = "Bearer " + token
-    
+
     start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
     query_and_rebook(headers=headers)

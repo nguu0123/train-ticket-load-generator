@@ -19,15 +19,17 @@ class Query:
         self.uid = ""
         self.token = ""
         self.session = requests.Session()
-        self.session.headers.update({
-            'Proxy-Connection': 'keep-alive',
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
-            'Content-Type': 'application/json',
-            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-            'Connection': 'keep-alive',
-        })
+        self.session.headers.update(
+            {
+                "Proxy-Connection": "keep-alive",
+                "Accept": "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+                "Content-Type": "application/json",
+                "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+                "Connection": "keep-alive",
+            }
+        )
 
     def login(self, username="fdse_microservice", password="111111") -> bool:
         """
@@ -36,13 +38,12 @@ class Query:
         url = f"{self.address}/api/v1/users/login"
 
         headers = {
-            'Origin': url,
-            'Referer': f"{self.address}/client_login.html",
+            "Origin": url,
+            "Referer": f"{self.address}/client_login.html",
         }
 
-        data = '{"username":"' + username + '","password":"' + \
-            password + '"}'
-            # password + '","verificationCode":"1234"}'
+        data = '{"username":"' + username + '","password":"' + password + '"}'
+        # password + '","verificationCode":"1234"}'
 
         # 获取cookies
         # verify_url = self.address + '/api/v1/verifycode/generate'
@@ -53,9 +54,7 @@ class Query:
             data = r.json().get("data")
             self.uid = data.get("userId")
             self.token = data.get("token")
-            self.session.headers.update(
-                {"Authorization": f"Bearer {self.token}"}
-            )
+            self.session.headers.update({"Authorization": f"Bearer {self.token}"})
             logger.info(f"login success, uid: {self.uid}")
             return True
         else:
@@ -65,7 +64,9 @@ class Query:
     def admin_login(self):
         return self.login
 
-    def query_high_speed_ticket(self, place_pair: tuple = (), time: str = "", headers: dict = {}) -> List[str]:
+    def query_high_speed_ticket(
+        self, place_pair: tuple = (), time: str = "", headers: dict = {}
+    ) -> List[str]:
         """
         返回TripId 列表
         :param place_pair: 使用的开始结束组对
@@ -74,9 +75,11 @@ class Query:
         """
 
         url = f"{self.address}/api/v1/travelservice/trips/left"
-        place_pairs = [("Shang Hai", "Su Zhou"),
-                       ("Su Zhou", "Shang Hai"),
-                       ("Nan Jing", "Shang Hai")]
+        place_pairs = [
+            ("Shang Hai", "Su Zhou"),
+            ("Su Zhou", "Shang Hai"),
+            ("Nan Jing", "Shang Hai"),
+        ]
 
         if place_pair == ():
             place_pair = random.choice(place_pairs)
@@ -86,7 +89,7 @@ class Query:
 
         payload = {
             "departureTime": time,
-            "startingPlace": place_pair[0],
+            "startPlace": place_pair[0],
             "endPlace": place_pair[1],
         }
 
@@ -94,23 +97,24 @@ class Query:
 
         if response.status_code != 200 or response.json().get("data") is None:
             logger.warning(
-                f"request for {url} failed. response data is {response.text}")
+                f"request for {url} failed. response data is {response.text}"
+            )
             return None
 
         data = response.json().get("data")  # type: dict
 
         trip_ids = []
         for d in data:
-            trip_id = d.get("tripId").get("type") + \
-                d.get("tripId").get("number")
+            trip_id = d.get("tripId").get("type") + d.get("tripId").get("number")
             trip_ids.append(trip_id)
         logger.info(f"query high speed ticket success, trip_ids: {trip_ids}")
         return trip_ids
 
-    def query_normal_ticket(self, place_pair: tuple = (), time: str = "", headers: dict = {}) -> List[str]:
+    def query_normal_ticket(
+        self, place_pair: tuple = (), time: str = "", headers: dict = {}
+    ) -> List[str]:
         url = f"{self.address}/api/v1/travel2service/trips/left"
-        place_pairs = [("Shang Hai", "Nan Jing"),
-                       ("Nan Jing", "Shang Hai")]
+        place_pairs = [("Shang Hai", "Su Zhou"), ("Su Zhou", "Shang Hai")]
 
         if place_pair == ():
             place_pair = random.choice(place_pairs)
@@ -120,27 +124,30 @@ class Query:
 
         payload = {
             "departureTime": time,
-            "startingPlace": place_pair[0],
+            "startPlace": place_pair[0],
             "endPlace": place_pair[1],
         }
 
         response = self.session.post(url=url, headers=headers, json=payload)
-
+        print(response.json())
         if response.status_code != 200 or response.json().get("data") is None:
-            logger.warning( f"request for {url} failed. response data is {response.text}")
+            logger.warning(
+                f"request for {url} failed. response data is {response.text}"
+            )
             return None
 
         data = response.json().get("data")  # type: dict
 
         trip_ids = []
         for d in data:
-            trip_id = d.get("tripId").get("type") + \
-                d.get("tripId").get("number")
+            trip_id = d.get("tripId").get("type") + d.get("tripId").get("number")
             trip_ids.append(trip_id)
         logger.info(f"query normal ticket success, trip_ids: {trip_ids}")
         return trip_ids
 
-    def query_high_speed_ticket_parallel(self, place_pair: tuple = (), time: str = "", headers: dict = {}) -> List[str]:
+    def query_high_speed_ticket_parallel(
+        self, place_pair: tuple = (), time: str = "", headers: dict = {}
+    ) -> List[str]:
         """
         返回TripId 列表
         :param place_pair: 使用的开始结束组对
@@ -149,9 +156,11 @@ class Query:
         """
 
         url = f"{self.address}/api/v1/travelservice/trips/left_parallel"
-        place_pairs = [("Shang Hai", "Su Zhou"),
-                       ("Su Zhou", "Shang Hai"),
-                       ("Nan Jing", "Shang Hai")]
+        place_pairs = [
+            ("Shang Hai", "Su Zhou"),
+            ("Su Zhou", "Shang Hai"),
+            ("Nan Jing", "Shang Hai"),
+        ]
 
         if place_pair == ():
             place_pair = random.choice(place_pairs)
@@ -169,28 +178,36 @@ class Query:
 
         if response.status_code != 200 or response.json().get("data") is None:
             logger.warning(
-                f"request for {url} failed. response data is {response.text}")
+                f"request for {url} failed. response data is {response.text}"
+            )
             return None
 
         data = response.json().get("data")  # type: dict
 
         trip_ids = []
         for d in data:
-            trip_id = d.get("tripId").get("type") + \
-                d.get("tripId").get("number")
+            trip_id = d.get("tripId").get("type") + d.get("tripId").get("number")
             trip_ids.append(trip_id)
         return trip_ids
 
-    def query_advanced_ticket(self, place_pair: tuple = (), type: str = "cheapest", date: str = "", headers: dict = {}) -> List[str]:
+    def query_advanced_ticket(
+        self,
+        place_pair: tuple = (),
+        type: str = "cheapest",
+        date: str = "",
+        headers: dict = {},
+    ) -> List[str]:
         """
         高级查询
         :param type [cheapet, quickest, minStation]
         """
 
         url = f"{self.address}/api/v1/travelplanservice/travelPlan/{type}"
-        place_pairs = [("Shang Hai", "Su Zhou"),
-                       ("Su Zhou", "Shang Hai"),
-                       ("Nan Jing", "Shang Hai")]
+        place_pairs = [
+            ("Shang Hai", "Su Zhou"),
+            ("Su Zhou", "Shang Hai"),
+            ("Nan Jing", "Shang Hai"),
+        ]
 
         if place_pair == ():
             place_pair = random.choice(place_pairs)
@@ -208,7 +225,8 @@ class Query:
 
         if response.status_code != 200 or response.json().get("data") is None:
             logger.warning(
-                f"request for {url} failed. response data is {response.text}")
+                f"request for {url} failed. response data is {response.text}"
+            )
             return None
 
         data = response.json().get("data")
@@ -224,34 +242,39 @@ class Query:
 
         response = self.session.get(url=url, headers=headers)
         if response.status_code != 200 or response.json().get("data") is None:
-            logger.warning(
-                f"query assurance failed, response data is {response.text}")
+            logger.warning(f"query assurance failed, response data is {response.text}")
             return None
         _ = response.json().get("data")
         # assurance只有一种
-    
+
         logger.info(f"query assurance success")
         return [{"assurance": "1"}]
 
-    def query_food(self, place_pair: tuple = ("Shang Hai", "Su Zhou"), train_num: str = "D1345", headers: dict = {}):
-        url = f"{self.address}/api/v1/foodservice/foods/2021-07-14/{place_pair[0]}/{place_pair[1]}/{train_num}"
+    def query_food(
+        self,
+        place_pair: tuple = ("Shang Hai", "Su Zhou"),
+        train_num: str = "D1345",
+        headers: dict = {},
+    ):
+        url = f"{self.address}/api/v1/foodservice/foods/{datestr}/{place_pair[0].replace(' ', '').lower()}/{place_pair[1].replace(' ', '').lower()}/{train_num}"
 
         response = self.session.get(url=url, headers=headers)
         if response.status_code != 200 or response.json().get("data") is None:
-            logger.warning(
-                f"query food failed, response data is {response.text}")
+            logger.warning(f"query food failed, response data is {response.text}")
             return None
         _ = response.json().get("data")
 
         # food 是什么不会对后续调用链有影响，因此查询后返回一个固定数值
         logger.info(f"query food success")
-        return [{
-            "foodName": "Soup",
-            "foodPrice": 3.7,
-            "foodType": 2,
-            "stationName": "Su Zhou",
-            "storeName": "Roman Holiday"
-        }]
+        return [
+            {
+                "foodName": "Soup",
+                "foodPrice": 3.7,
+                "foodType": 2,
+                "stationName": "Su Zhou",
+                "storeName": "Roman Holiday",
+            }
+        ]
 
     def query_contacts(self, headers: dict = {}) -> List[str]:
         """
@@ -263,8 +286,7 @@ class Query:
 
         response = self.session.get(url=url, headers=headers)
         if response.status_code != 200 or response.json().get("data") is None:
-            logger.warning(
-                f"query contacts failed, response data is {response.text}")
+            logger.warning(f"query contacts failed, response data is {response.text}")
             return None
 
         data = response.json().get("data")
@@ -275,7 +297,12 @@ class Query:
         # pprint(ids)
         return ids
 
-    def query_orders(self, types: tuple = tuple([0, 1]), query_other: bool = False, headers: dict = {}) -> List[tuple]:
+    def query_orders(
+        self,
+        types: tuple = tuple([0, 1]),
+        query_other: bool = False,
+        headers: dict = {},
+    ) -> List[tuple]:
         """
         返回(orderId, tripId) triple list for inside_pay_service
         :param headers:
@@ -294,8 +321,7 @@ class Query:
 
         response = self.session.post(url=url, headers=headers, json=payload)
         if response.status_code != 200 or response.json().get("data") is None:
-            logger.warning(
-                f"query orders failed, response data is {response.text}")
+            logger.warning(f"query orders failed, response data is {response.text}")
             return None
 
         data = response.json().get("data")
@@ -313,10 +339,14 @@ class Query:
 
         return pairs
 
-    def query_other_orders(self, types: tuple = tuple([0, 1]), headers: dict = {}) -> List[tuple]:
+    def query_other_orders(
+        self, types: tuple = tuple([0, 1]), headers: dict = {}
+    ) -> List[tuple]:
         return self.query_orders(types, True, headers)
 
-    def query_orders_all_info(self, query_other: bool = False, headers: dict = {}) -> List[dict]:
+    def query_orders_all_info(
+        self, query_other: bool = False, headers: dict = {}
+    ) -> List[dict]:
         """
         返回(orderId, tripId) triple list for consign service
         :param headers:
@@ -334,8 +364,7 @@ class Query:
 
         response = self.session.post(url=url, headers=headers, json=payload)
         if response.status_code != 200 or response.json().get("data") is None:
-            logger.warning(
-                f"query orders failed, response data is {response.text}")
+            logger.warning(f"query orders failed, response data is {response.text}")
             return None
 
         data = response.json().get("data")
@@ -344,7 +373,8 @@ class Query:
             result = {}
             result["accountId"] = d.get("accountId")
             result["targetDate"] = time.strftime(
-                '%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+                "%Y-%m-%d %H:%M:%S", time.localtime(time.time())
+            )
             result["orderId"] = d.get("id")
             result["from"] = d.get("from")
             result["to"] = d.get("to")
@@ -358,7 +388,7 @@ class Query:
         url = f"{self.address}/api/v1/consignservice/consigns"
         consignload = {
             "accountId": result["accountId"],
-            "handleDate": time.strftime('%Y-%m-%d', time.localtime(time.time())),
+            "handleDate": time.strftime("%Y-%m-%d", time.localtime(time.time())),
             "targetDate": result["targetDate"],
             "from": result["from"],
             "to": result["to"],
@@ -367,23 +397,23 @@ class Query:
             "phone": "12345677654",
             "weight": "32",
             "id": "",
-            "isWithin": False
+            "isWithin": False,
         }
-        res = self.session.put(url=url, headers=headers,
-                               json=consignload)
+        res = self.session.put(url=url, headers=headers, json=consignload)
 
         order_id = result["orderId"]
         if res.status_code == 200 or res.status_code == 201:
             logger.info(f"order {order_id} put consign success")
         else:
             logger.warning(
-                f"order {order_id} failed, code: {res.status_code}, text: {res.text}")
+                f"order {order_id} failed, code: {res.status_code}, text: {res.text}"
+            )
             return None
 
         return order_id
 
-    def query_route(self, routeId: str = '', headers: dict = {}):
-        if routeId == '':
+    def query_route(self, routeId: str = "", headers: dict = {}):
+        if routeId == "":
             url = f"{self.address}/api/v1/routeservice/routes"
         else:
             url = f"{self.address}/api/v1/routeservice/routes/{routeId}"
@@ -394,16 +424,14 @@ class Query:
             logger.info(f"query routeId success")
         else:
             logger.warning(
-                f"query routeId: {routeId} fail, code: {res.status_code}, text: {res.text}")
+                f"query routeId: {routeId} fail, code: {res.status_code}, text: {res.text}"
+            )
 
         return
 
     def pay_order(self, order_id: str, trip_id: str, headers: dict = {}) -> str:
         url = f"{self.address}/api/v1/inside_pay_service/inside_payment"
-        payload = {
-            "orderId": order_id,
-            "tripId": trip_id
-        }
+        payload = {"orderId": order_id, "tripId": trip_id}
 
         res = self.session.post(url=url, headers=headers, json=payload)
 
@@ -411,7 +439,8 @@ class Query:
             logger.info(f"order {order_id} pay success")
         else:
             logger.warning(
-                f"pay order {order_id} failed, code: {res.status_code}, text: {res.text}")
+                f"pay order {order_id} failed, code: {res.status_code}, text: {res.text}"
+            )
             return None
 
         return order_id
@@ -425,7 +454,8 @@ class Query:
             logger.info(f"order {order_id} cancel success")
         else:
             logger.warning(
-                f"order {order_id} cancel failed, code: {res.status_code}, text: {res.text}")
+                f"order {order_id} cancel failed, code: {res.status_code}, text: {res.text}"
+            )
 
         return order_id
 
@@ -436,19 +466,20 @@ class Query:
             logger.info(f"order {order_id} collect success")
         else:
             logger.warning(
-                f"order {order_id} collect failed, code: {res.status_code}, text: {res.text}")
+                f"order {order_id} collect failed, code: {res.status_code}, text: {res.text}"
+            )
 
         return order_id
 
     def enter_station(self, order_id, headers: dict = {}):
         url = f"{self.address}/api/v1/executeservice/execute/execute/{order_id}"
-        res = self.session.get(url=url,
-                               headers=headers)
+        res = self.session.get(url=url, headers=headers)
         if res.status_code == 200:
             logger.info(f"order {order_id} enter station success")
         else:
             logger.warning(
-                f"order {order_id} enter station failed, code: {res.status_code}, text: {res.text}")
+                f"order {order_id} enter station failed, code: {res.status_code}, text: {res.text}"
+            )
 
         return order_id
 
@@ -482,7 +513,15 @@ class Query:
             logger.warning(f"config failed")
             return None
 
-    def rebook_ticket(self, old_order_id, old_trip_id, new_trip_id, new_date="", new_seat_type="", headers: dict = {}):
+    def rebook_ticket(
+        self,
+        old_order_id,
+        old_trip_id,
+        new_trip_id,
+        new_date="",
+        new_seat_type="",
+        headers: dict = {},
+    ):
         url = f"{self.address}/api/v1/rebookservice/rebook"
 
         if new_date == "":
@@ -496,15 +535,14 @@ class Query:
             "orderId": old_order_id,
             "tripId": new_trip_id,
             "date": new_date,
-            "seatType": new_seat_type
+            "seatType": new_seat_type,
         }
         # print(payload)
         r = self.session.post(url=url, json=payload, headers=headers)
         if r.status_code == 200:
             logger.info(r.text)
         else:
-            logger.warning(
-                f"Request Failed: status code: {r.status_code}, {r.text}")
+            logger.warning(f"Request Failed: status code: {r.status_code}, {r.text}")
 
         return
 
@@ -516,10 +554,19 @@ class Query:
             logger.info("success to query admin travel")
         else:
             logger.warning(
-                f"faild to query admin travel with status_code: {r.status_code}")
+                f"faild to query admin travel with status_code: {r.status_code}"
+            )
         return
 
-    def preserve(self, start: str, end: str, trip_ids: List = [], is_high_speed: bool = True, date: str = "", headers: dict = {}):
+    def preserve(
+        self,
+        start: str,
+        end: str,
+        trip_ids: List = [],
+        is_high_speed: bool = True,
+        date: str = "",
+        headers: dict = {},
+    ):
         if date == "":
             date = datestr
 
@@ -535,7 +582,7 @@ class Query:
             "date": date,
             "from": start,
             "to": end,
-            "tripId": ""
+            "tripId": "",
         }
 
         trip_id = random_from_list(trip_ids)
@@ -569,20 +616,20 @@ class Query:
                 "consigneeName": random_str(),
                 "consigneePhone": random_phone(),
                 "consigneeWeight": random.randint(1, 10),
-                "handleDate": date
+                "handleDate": date,
             }
             base_preserve_payload.update(consign)
 
         logger.info(
-            f"choices: preserve_high: {is_high_speed} need_food:{need_food}  need_consign: {need_consign}  need_assurance:{need_assurance}")
+            f"choices: preserve_high: {is_high_speed} need_food:{need_food}  need_consign: {need_consign}  need_assurance:{need_assurance}"
+        )
 
-        res = self.session.post(url=PRESERVE_URL,
-                                headers=headers,
-                                json=base_preserve_payload)
+        res = self.session.post(
+            url=PRESERVE_URL, headers=headers, json=base_preserve_payload
+        )
 
         if res.status_code == 200 and res.json()["data"] == "Success":
             logger.info(f"preserve trip {trip_id} success")
         else:
-            logger.error(
-                f"preserve failed, code: {res.status_code}, {res.text}")
+            logger.error(f"preserve failed, code: {res.status_code}, {res.text}")
         return

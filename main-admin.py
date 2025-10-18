@@ -10,7 +10,6 @@ from datetime import datetime, timedelta, date
 from locust import HttpUser, task, between, constant, events
 
 
-
 class UserBooking(HttpUser):
     wait_time = between(2, 10)
 
@@ -21,7 +20,6 @@ class UserBooking(HttpUser):
         query.login(username="admin", password="222222")
         query.query_admin_travel()
         time.sleep(random.randint(1, 5))
-        query.query_admin_basic_price() 
+        query.query_admin_basic_price()
         time.sleep(random.randint(1, 5))
         query.query_admin_basic_config()
-

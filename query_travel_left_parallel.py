@@ -1,4 +1,8 @@
-from atomic_queries import _query_high_speed_ticket, _query_normal_ticket, _query_high_speed_ticket_parallel
+from atomic_queries import (
+    _query_high_speed_ticket,
+    _query_normal_ticket,
+    _query_high_speed_ticket_parallel,
+)
 from utils import random_boolean
 
 import logging
@@ -28,17 +32,19 @@ def query_travel_left_parallel(headers):
     start = "Su Zhou"
     end = "Shang Hai"
     high_speed_place_pair = (start, end)
-    trip_ids = _query_high_speed_ticket_parallel(place_pair=high_speed_place_pair, headers=headers, time=date)
+    trip_ids = _query_high_speed_ticket_parallel(
+        place_pair=high_speed_place_pair, headers=headers, time=date
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cookie = "JSESSIONID=823B2652E3F5B64A1C94C924A05D80AF; YsbCaptcha=2E037F4AB09D49FA9EE3BE4E737EAFD2"
     Authorization = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmZHNlX21pY3Jvc2VydmljZSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpZCI6IjRkMmE0NmM3LTcxY2ItNGNmMS1iNWJiLWI2ODQwNmQ5ZGE2ZiIsImlhdCI6MTYyOTM2ODk1NiwiZXhwIjoxNjI5MzcyNTU2fQ.K206pVlC2JgeATGYjQksPJt3DUNsfbVH4pgx9b54zwg"
     headers = {
-        'Connection': 'close',
+        "Connection": "close",
         "Cookie": f"{cookie}",
         "Authorization": f"Bearer {Authorization}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
 
     start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())

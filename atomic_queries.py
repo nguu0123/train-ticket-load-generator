@@ -10,7 +10,7 @@ headers = {
     "Cookie": "JSESSIONID=CAF07ABCB2031807D1C6043730C69F17; YsbCaptcha=ABF26F4AE563405894B1540057F62E7B",
     "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmZHNlX21pY3Jvc2VydmljZSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpZCI6IjRkMmE0NmM3LTcxY2ItNGNmMS1iNWJiLWI2ODQwNmQ5ZGE2ZiIsImlhdCI6MTYyNjM0NDgyNSwiZXhwIjoxNjI2MzQ4NDI1fQ.4eOMmQDhnq-Hjj1DuiH8duT6rXkP0QfeTnaXwvYGKD4",
     "Content-Type": "application/json",
-    "Connection": "close"
+    "Connection": "close",
 }
 
 # The UUID of fdse_microservice is that
@@ -23,26 +23,27 @@ def _login(username="fdse_microservice", password="111111"):
     url = f"{base_address}/api/v1/users/login"
 
     cookies = {
-        'JSESSIONID': '9ED5635A2A892A4BA31E7E98533A279D',
-        'YsbCaptcha': '025080CF8BA94594B09E283F17815444',
+        "JSESSIONID": "9ED5635A2A892A4BA31E7E98533A279D",
+        "YsbCaptcha": "025080CF8BA94594B09E283F17815444",
     }
 
     headers = {
-        'Proxy-Connection': 'keep-alive',
-        'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'X-Requested-With': 'XMLHttpRequest',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
-        'Content-Type': 'application/json',
-        'Origin': url,
-        'Referer': f"{base_address}/client_login.html",
-        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-        'Connection': 'close'
+        "Proxy-Connection": "keep-alive",
+        "Accept": "application/json, text/javascript, */*; q=0.01",
+        "X-Requested-With": "XMLHttpRequest",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+        "Content-Type": "application/json",
+        "Origin": url,
+        "Referer": f"{base_address}/client_login.html",
+        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "Connection": "close",
     }
 
     data = '{"username":"' + username + '","password":"' + password + '"}'
 
-    r = requests.post(url=url, headers=headers,
-                      cookies=cookies, data=data, verify=False)
+    r = requests.post(
+        url=url, headers=headers, cookies=cookies, data=data, verify=False
+    )
 
     if r.status_code == 200:
         data = r.json().get("data")
@@ -58,8 +59,11 @@ def admin_login():
     return _login
 
 
-def _query_high_speed_ticket(place_pair: tuple = ("Shang Hai", "Su Zhou"), headers: dict = {},
-                             time: str = "2021-07-15") -> List[str]:
+def _query_high_speed_ticket(
+    place_pair: tuple = ("Shang Hai", "Su Zhou"),
+    headers: dict = {},
+    time: str = "2021-07-15",
+) -> List[str]:
     """
     返回TripId 列表
     :param place_pair: 使用的开始结束组对
@@ -68,9 +72,11 @@ def _query_high_speed_ticket(place_pair: tuple = ("Shang Hai", "Su Zhou"), heade
     """
 
     url = f"{base_address}/api/v1/travelservice/trips/left"
-    place_pairs = [("Shang Hai", "Su Zhou"),
-                   ("Su Zhou", "Shang Hai"),
-                   ("Nan Jing", "Shang Hai")]
+    place_pairs = [
+        ("Shang Hai", "Su Zhou"),
+        ("Su Zhou", "Shang Hai"),
+        ("Nan Jing", "Shang Hai"),
+    ]
 
     payload = {
         "departureTime": time,
@@ -78,9 +84,7 @@ def _query_high_speed_ticket(place_pair: tuple = ("Shang Hai", "Su Zhou"), heade
         "endPlace": place_pair[1],
     }
 
-    response = requests.post(url=url,
-                             headers=headers,
-                             json=payload)
+    response = requests.post(url=url, headers=headers, json=payload)
 
     if response.status_code is not 200 or response.json().get("data") is None:
         logger.warning(f"request for {url} failed. response data is {response.text}")
@@ -95,11 +99,13 @@ def _query_high_speed_ticket(place_pair: tuple = ("Shang Hai", "Su Zhou"), heade
     return trip_ids
 
 
-def _query_normal_ticket(place_pair: tuple = ("Nan Jing", "Shang Hai"), headers: dict = {},
-                         time: str = "2021-07-15") -> List[str]:
+def _query_normal_ticket(
+    place_pair: tuple = ("Nan Jing", "Shang Hai"),
+    headers: dict = {},
+    time: str = "2021-07-15",
+) -> List[str]:
     url = f"{base_address}/api/v1/travel2service/trips/left"
-    place_pairs = [("Shang Hai", "Nan Jing"),
-                   ("Nan Jing", "Shang Hai")]
+    place_pairs = [("Shang Hai", "Nan Jing"), ("Nan Jing", "Shang Hai")]
 
     payload = {
         "departureTime": time,
@@ -107,9 +113,7 @@ def _query_normal_ticket(place_pair: tuple = ("Nan Jing", "Shang Hai"), headers:
         "endPlace": place_pair[1],
     }
 
-    response = requests.post(url=url,
-                             headers=headers,
-                             json=payload)
+    response = requests.post(url=url, headers=headers, json=payload)
     if response.status_code is not 200 or response.json().get("data") is None:
         logger.warning(f"request for {url} failed. response data is {response.json()}")
         return None
@@ -123,8 +127,11 @@ def _query_normal_ticket(place_pair: tuple = ("Nan Jing", "Shang Hai"), headers:
     return trip_ids
 
 
-def _query_high_speed_ticket_parallel(place_pair: tuple = ("Shang Hai", "Su Zhou"), headers: dict = {},
-                                      time: str = "2021-07-15") -> List[str]:
+def _query_high_speed_ticket_parallel(
+    place_pair: tuple = ("Shang Hai", "Su Zhou"),
+    headers: dict = {},
+    time: str = "2021-07-15",
+) -> List[str]:
     """
     返回TripId 列表
     :param place_pair: 使用的开始结束组对
@@ -133,9 +140,11 @@ def _query_high_speed_ticket_parallel(place_pair: tuple = ("Shang Hai", "Su Zhou
     """
 
     url = f"{base_address}/api/v1/travelservice/trips/left_parallel"
-    place_pairs = [("Shang Hai", "Su Zhou"),
-                   ("Su Zhou", "Shang Hai"),
-                   ("Nan Jing", "Shang Hai")]
+    place_pairs = [
+        ("Shang Hai", "Su Zhou"),
+        ("Su Zhou", "Shang Hai"),
+        ("Nan Jing", "Shang Hai"),
+    ]
 
     payload = {
         "departureTime": time,
@@ -143,9 +152,7 @@ def _query_high_speed_ticket_parallel(place_pair: tuple = ("Shang Hai", "Su Zhou
         "endPlace": place_pair[1],
     }
 
-    response = requests.post(url=url,
-                             headers=headers,
-                             json=payload)
+    response = requests.post(url=url, headers=headers, json=payload)
 
     if response.status_code is not 200 or response.json().get("data") is None:
         logger.warning(f"request for {url} failed. response data is {response.text}")
@@ -160,8 +167,12 @@ def _query_high_speed_ticket_parallel(place_pair: tuple = ("Shang Hai", "Su Zhou
     return trip_ids
 
 
-def _query_advanced_ticket(place_pair: tuple = ("Nan Jing", "Shang Hai"), headers: dict = {}, time: str = "2021-07-15",
-                           type: str = "cheapest") -> List[str]:
+def _query_advanced_ticket(
+    place_pair: tuple = ("Nan Jing", "Shang Hai"),
+    headers: dict = {},
+    time: str = "2021-07-15",
+    type: str = "cheapest",
+) -> List[str]:
     url = f"{base_address}/api/v1/travelplanservice/travelPlan/" + type
     print(url)
 
@@ -173,9 +184,7 @@ def _query_advanced_ticket(place_pair: tuple = ("Nan Jing", "Shang Hai"), header
 
     # print(payload)
 
-    response = requests.post(url=url,
-                             headers=headers,
-                             json=payload)
+    response = requests.post(url=url, headers=headers, json=payload)
     # print(response.text)
     if response.status_code is not 200 or response.json().get("data") is None:
         logger.warning(f"request for {url} failed. response data is {response.json()}")
@@ -202,7 +211,11 @@ def _query_assurances(headers: dict = {}):
     return [{"assurance": "1"}]
 
 
-def _query_food(place_pair: tuple = ("Shang Hai", "Su Zhou"), train_num: str = "D1345", headers: dict = {}):
+def _query_food(
+    place_pair: tuple = ("Shang Hai", "Su Zhou"),
+    train_num: str = "D1345",
+    headers: dict = {},
+):
     url = f"{base_address}/api/v1/foodservice/foods/2021-07-14/{place_pair[0]}/{place_pair[1]}/{train_num}"
 
     response = requests.get(url=url, headers=headers)
@@ -212,13 +225,15 @@ def _query_food(place_pair: tuple = ("Shang Hai", "Su Zhou"), train_num: str = "
     data = response.json().get("data")
 
     # food 是什么不会对后续调用链有影响，因此查询后返回一个固定数值
-    return [{
-        "foodName": "Soup",
-        "foodPrice": 3.7,
-        "foodType": 2,
-        "stationName": "Su Zhou",
-        "storeName": "Roman Holiday"
-    }]
+    return [
+        {
+            "foodName": "Soup",
+            "foodPrice": 3.7,
+            "foodType": 2,
+            "stationName": "Su Zhou",
+            "storeName": "Roman Holiday",
+        }
+    ]
 
 
 def _query_contacts(headers: dict = {}) -> List[str]:
@@ -244,7 +259,9 @@ def _query_contacts(headers: dict = {}) -> List[str]:
     return ids
 
 
-def _query_orders(headers: dict = {}, types: tuple = tuple([0]), query_other: bool = False) -> List[tuple]:
+def _query_orders(
+    headers: dict = {}, types: tuple = tuple([0]), query_other: bool = False
+) -> List[tuple]:
     """
     返回(orderId, tripId) triple list for inside_pay_service
     :param headers:
@@ -281,7 +298,9 @@ def _query_orders(headers: dict = {}, types: tuple = tuple([0]), query_other: bo
     return pairs
 
 
-def _query_orders_all_info(headers: dict = {}, query_other: bool = False) -> List[tuple]:
+def _query_orders_all_info(
+    headers: dict = {}, query_other: bool = False
+) -> List[tuple]:
     """
     返回(orderId, tripId) triple list for consign service
     :param headers:
@@ -307,7 +326,9 @@ def _query_orders_all_info(headers: dict = {}, query_other: bool = False) -> Lis
     for d in data:
         result = {}
         result["accountId"] = d.get("accountId")
-        result["targetDate"] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        result["targetDate"] = time.strftime(
+            "%Y-%m-%d %H:%M:%S", time.localtime(time.time())
+        )
         result["orderId"] = d.get("id")
         result["from"] = d.get("from")
         result["to"] = d.get("to")
@@ -321,7 +342,7 @@ def _put_consign(result, headers: dict = {}):
     url = f"{base_address}/api/v1/consignservice/consigns"
     consignload = {
         "accountId": result["accountId"],
-        "handleDate": time.strftime('%Y-%m-%d', time.localtime(time.time())),
+        "handleDate": time.strftime("%Y-%m-%d", time.localtime(time.time())),
         "targetDate": result["targetDate"],
         "from": result["from"],
         "to": result["to"],
@@ -330,10 +351,9 @@ def _put_consign(result, headers: dict = {}):
         "phone": "12345677654",
         "weight": "32",
         "id": "",
-        "isWithin": False
+        "isWithin": False,
     }
-    response = requests.put(url=url, headers=headers,
-                            json=consignload)
+    response = requests.put(url=url, headers=headers, json=consignload)
 
     order_id = result["orderId"]
     if response.status_code == 200 | response.status_code == 201:
@@ -345,7 +365,9 @@ def _put_consign(result, headers: dict = {}):
     return order_id
 
 
-def _query_route(routeId: str = '92708982-77af-4318-be25-57ccb0ff69ad', headers: dict = {}):
+def _query_route(
+    routeId: str = "92708982-77af-4318-be25-57ccb0ff69ad", headers: dict = {}
+):
     url = f"{base_address}/api/v1/routeservice/routes/{routeId}"
 
     res = requests.get(url=url, headers=headers)
@@ -360,13 +382,9 @@ def _query_route(routeId: str = '92708982-77af-4318-be25-57ccb0ff69ad', headers:
 
 def _pay_one_order(order_id, trip_id, headers: dict = {}):
     url = f"{base_address}/api/v1/inside_pay_service/inside_payment"
-    payload = {
-        "orderId": order_id,
-        "tripId": trip_id
-    }
+    payload = {"orderId": order_id, "tripId": trip_id}
 
-    response = requests.post(url=url, headers=headers,
-                             json=payload)
+    response = requests.post(url=url, headers=headers, json=payload)
 
     if response.status_code == 200:
         print(f"{order_id} pay success")
@@ -380,8 +398,7 @@ def _pay_one_order(order_id, trip_id, headers: dict = {}):
 def _cancel_one_order(order_id, uuid, headers: dict = {}):
     url = f"{base_address}/api/v1/cancelservice/cancel/{order_id}/{uuid}"
 
-    response = requests.get(url=url,
-                            headers=headers)
+    response = requests.get(url=url, headers=headers)
 
     if response.status_code == 200:
         print(f"{order_id} cancel success")
@@ -393,8 +410,7 @@ def _cancel_one_order(order_id, uuid, headers: dict = {}):
 
 def _collect_one_order(order_id, headers: dict = {}):
     url = f"{base_address}/api/v1/executeservice/execute/collected/{order_id}"
-    response = requests.get(url=url,
-                            headers=headers)
+    response = requests.get(url=url, headers=headers)
     if response.status_code == 200:
         print(f"{order_id} collect success")
     else:
@@ -405,8 +421,7 @@ def _collect_one_order(order_id, headers: dict = {}):
 
 def _enter_station(order_id, headers: dict = {}):
     url = f"{base_address}/api/v1/executeservice/execute/execute/{order_id}"
-    response = requests.get(url=url,
-                            headers=headers)
+    response = requests.get(url=url, headers=headers)
     if response.status_code == 200:
         print(f"{order_id} enter station success")
     else:
@@ -421,7 +436,7 @@ def _query_cheapest(date="2021-12-31", headers: dict = {}):
     payload = {
         "departureTime": date,
         "endPlace": "Shang Hai",
-        "startingPlace": "Nan Jing"
+        "startingPlace": "Nan Jing",
     }
 
     r = requests.post(url=url, json=payload, headers=headers)
@@ -437,7 +452,7 @@ def _query_min_station(date="2021-12-31", headers: dict = {}):
     payload = {
         "departureTime": date,
         "endPlace": "Shang Hai",
-        "startingPlace": "Nan Jing"
+        "startingPlace": "Nan Jing",
     }
 
     r = requests.post(url=url, json=payload, headers=headers)
@@ -453,7 +468,7 @@ def _query_quickest(date="2021-12-31", headers: dict = {}):
     payload = {
         "departureTime": date,
         "endPlace": "Shang Hai",
-        "startingPlace": "Nan Jing"
+        "startingPlace": "Nan Jing",
     }
 
     r = requests.post(url=url, json=payload, headers=headers)
@@ -465,8 +480,7 @@ def _query_quickest(date="2021-12-31", headers: dict = {}):
 
 def _query_admin_basic_price(headers: dict = {}):
     url = f"{base_address}/api/v1/adminbasicservice/adminbasic/prices"
-    response = requests.get(url=url,
-                            headers=headers)
+    response = requests.get(url=url, headers=headers)
     if response.status_code == 200:
         print(f"price success")
         return response
@@ -477,8 +491,7 @@ def _query_admin_basic_price(headers: dict = {}):
 
 def _query_admin_basic_config(headers: dict = {}):
     url = f"{base_address}/api/v1/adminbasicservice/adminbasic/configs"
-    response = requests.get(url=url,
-                            headers=headers)
+    response = requests.get(url=url, headers=headers)
     if response.status_code == 200:
         print(f"config success")
         return response
@@ -487,7 +500,9 @@ def _query_admin_basic_config(headers: dict = {}):
         return None
 
 
-def _rebook_ticket(old_order_id, old_trip_id, new_trip_id, new_date, new_seat_type, headers):
+def _rebook_ticket(
+    old_order_id, old_trip_id, new_trip_id, new_date, new_seat_type, headers
+):
     url = f"{base_address}/api/v1/rebookservice/rebook"
 
     payload = {
@@ -495,7 +510,7 @@ def _rebook_ticket(old_order_id, old_trip_id, new_trip_id, new_date, new_seat_ty
         "orderId": old_order_id,
         "tripId": new_trip_id,
         "date": new_date,
-        "seatType": new_seat_type
+        "seatType": new_seat_type,
     }
     print(payload)
     r = requests.post(url=url, json=payload, headers=headers)
@@ -516,6 +531,6 @@ def _query_admin_travel(headers):
         print(f"faild to query admin travel with status_code: {r.status_code}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     _, token = _login(username="admin", password="222222")
     print(token)

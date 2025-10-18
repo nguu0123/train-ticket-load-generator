@@ -16,7 +16,7 @@ def main():
     headers = {
         "Cookie": "JSESSIONID=21A0370861087E0831E5D25D56BC9ABB; YsbCaptcha=BE12EE0295F548569DCC1D5B07FDBA55",
         "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmZHNlX21pY3Jvc2VydmljZSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpZCI6IjRkMmE0NmM3LTcxY2ItNGNmMS1iNWJiLWI2ODQwNmQ5ZGE2ZiIsImlhdCI6MTYyNzI2MzE4NywiZXhwIjoxNjI3MjY2Nzg3fQ.xOXWi3QpTYL1OZqXaAHmpifyPc_lMX9smtOPTUveO9M",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
 
     for i in range(30):
@@ -26,7 +26,7 @@ def main():
         if i % 20 == 0:
             uid, token = _login()
             if uid is not None and token is not None:
-                headers['Authorization'] = "Bearer " + token
+                headers["Authorization"] = "Bearer " + token
 
         print(f"idx:{i}")
         query_and_preserve(headers)
@@ -63,11 +63,11 @@ def query_order():
     headers = {
         "Cookie": "JSESSIONID=21A0370861087E0831E5D25D56BC9ABB; YsbCaptcha=BE12EE0295F548569DCC1D5B07FDBA55",
         "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmZHNlX21pY3Jvc2VydmljZSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpZCI6IjRkMmE0NmM3LTcxY2ItNGNmMS1iNWJiLWI2ODQwNmQ5ZGE2ZiIsImlhdCI6MTYyNzI2MzE4NywiZXhwIjoxNjI3MjY2Nzg3fQ.xOXWi3QpTYL1OZqXaAHmpifyPc_lMX9smtOPTUveO9M",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
     uid, token = _login()
     if uid is not None and token is not None:
-        headers['Authorization'] = "Bearer " + token
+        headers["Authorization"] = "Bearer " + token
 
     start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"start:{start_time}")
@@ -84,12 +84,11 @@ def query_tickets():
     headers = {
         "Cookie": "JSESSIONID=21A0370861087E0831E5D25D56BC9ABB; YsbCaptcha=BE12EE0295F548569DCC1D5B07FDBA55",
         "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmZHNlX21pY3Jvc2VydmljZSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpZCI6IjRkMmE0NmM3LTcxY2ItNGNmMS1iNWJiLWI2ODQwNmQ5ZGE2ZiIsImlhdCI6MTYyNzI2MzE4NywiZXhwIjoxNjI3MjY2Nzg3fQ.xOXWi3QpTYL1OZqXaAHmpifyPc_lMX9smtOPTUveO9M",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
     uid, token = _login()
     if uid is not None and token is not None:
-        headers['Authorization'] = "Bearer " + token
-
+        headers["Authorization"] = "Bearer " + token
 
     date = time.strftime("%Y-%m-%d", time.localtime())
 
@@ -101,13 +100,14 @@ def query_tickets():
     print(f"start:{start_time}")
 
     for i in range(50):
-        trip_ids = _query_high_speed_ticket(place_pair=high_speed_place_pair, headers=headers, time=date)
+        trip_ids = _query_high_speed_ticket(
+            place_pair=high_speed_place_pair, headers=headers, time=date
+        )
         print(trip_ids)
 
     end_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(f"start:{start_time} end:{end_time}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main_thread()
-
